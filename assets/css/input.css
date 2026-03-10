@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent hover:bg-amber-500 text-primary font-bold px-6 py-3 rounded-xl transition-all shadow-md;
+  }
+}
