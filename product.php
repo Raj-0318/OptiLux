@@ -165,7 +165,8 @@ if (isLoggedIn()) {
                 <div class="relative w-full aspect-square bg-[#F7F7F7] mb-6 overflow-hidden group">
                     <?php $img = !empty($prod['image']) ? $prod['image'] : ''; ?>
                     <a href="/Optilux/product.php?id=<?= $prod['id'] ?>" class="block w-full h-full flex items-center justify-center">
-                         <img src="<?= $img ?>" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-in-out mix-blend-screen">
+                         <img src="<?= $img ?>" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-in-out mix-blend-multiply">
+
                     </a>
                 </div>
                 <div class="text-center">

@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$products = $conn->query("SELECT p.*, c.name as cat_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.created_at DESC")->fetchAll();
+$products = $conn->query("SELECT p.*, c.name as cat_name, b.name as brand_name FROM products p LEFT JOIN categories c ON p.category_id = c.id LEFT JOIN brands b ON p.brand_id = b.id ORDER BY p.created_at DESC")->fetchAll();
+
 ?>
 
 <div class="glass-card overflow-hidden">
@@ -50,6 +51,8 @@ $products = $conn->query("SELECT p.*, c.name as cat_name FROM products p LEFT JO
                     <th class="px-8 py-6 font-bold">ID</th>
                     <th class="px-8 py-6 font-bold">Product</th>
                     <th class="px-8 py-6 font-bold">Category</th>
+                    <th class="px-8 py-6 font-bold">Brand</th>
+
                     <th class="px-8 py-6 font-bold">Price</th>
                     <th class="px-8 py-6 font-bold text-center">Stock</th>
                     <th class="px-8 py-6 font-bold text-right">Actions</th>
@@ -79,6 +82,12 @@ $products = $conn->query("SELECT p.*, c.name as cat_name FROM products p LEFT JO
                             <?= htmlspecialchars($prod['cat_name'] ?? 'Uncategorized') ?>
                         </span>
                     </td>
+                    <td class="px-8 py-6">
+                        <span class="px-3 py-1.5 rounded-lg bg-white/5 border border-border text-[9px] font-bold uppercase tracking-widest text-muted">
+                            <?= htmlspecialchars($prod['brand_name'] ?? 'No Brand') ?>
+                        </span>
+                    </td>
+
                     <td class="px-8 py-6">
                         <?php if ($prod['sale_price']): ?>
                             <p class="font-bold text-brand">₹<?= number_format($prod['sale_price'], 2) ?></p>
