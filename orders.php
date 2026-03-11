@@ -13,62 +13,103 @@ $wishlist_count = $stmt_wishlist->fetch()['count'];
 $stmt_orders = $conn->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC");
 $stmt_orders->execute([$user_id]);
 $orders = $stmt_orders->fetchAll();
+
+$user_stmt = $conn->prepare("SELECT name FROM users WHERE id = ?");
+$user_stmt->execute([$user_id]);
+$user_data = $user_stmt->fetch();
 ?>
 
-<div class="max-w-7xl mx-auto px-4 py-12 flex flex-col md:flex-row gap-8">
-    <!-- Sidebar -->
-    <div class="w-full md:w-64 flex-shrink-0">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 sticky top-24">
-            <nav class="space-y-1">
-                <a href="/Optilux/account.php" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-accent rounded-xl transition">
-                    <i data-lucide="user" class="w-5 h-5"></i> Profile
-                </a>
-                <a href="/Optilux/orders.php" class="flex items-center gap-3 px-4 py-3 bg-slate-50 text-accent font-bold rounded-xl border border-slate-100 transition">
-                    <i data-lucide="package" class="w-5 h-5"></i> My Orders
-                </a>
-                <a href="/Optilux/wishlist.php" class="flex items-center justify-between px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-accent rounded-xl transition">
-                    <div class="flex items-center gap-3"><i data-lucide="heart" class="w-5 h-5"></i> Wishlist</div>
-                    <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-md font-bold"><?= $wishlist_count ?></span>
-                </a>
-                <a href="/Optilux/logout.php" class="flex items-center gap-3 px-4 py-3 text-rose-500 hover:bg-rose-50 rounded-xl transition mt-4">
-                    <i data-lucide="log-out" class="w-5 h-5"></i> Logout
-                </a>
-            </nav>
+<!-- Orders Cinematic Hero -->
+<div class="bg-primary text-white py-20 border-b border-white/5 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div>
+                <span class="text-accent text-[10px] font-bold tracking-[0.4em] uppercase mb-4 block">Personal Workspace</span>
+                <h1 class="text-4xl md:text-6xl font-serif tracking-widest uppercase leading-tight">Order Chronicle</h1>
+            </div>
+            <div class="text-right">
+                <p class="text-white/40 text-[10px] font-bold tracking-[0.2em] uppercase mb-2">Authenticated as</p>
+                <p class="text-xl font-serif text-accent tracking-wider"><?= htmlspecialchars($user_data['name'] ?? 'Member') ?></p>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Main Content -->
-    <div class="flex-grow space-y-8">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-            <h2 class="text-2xl font-bold text-primary mb-6">Order History</h2>
+<div class="max-w-7xl mx-auto px-6 py-20">
+    <div class="flex flex-col lg:flex-row gap-20">
+        <!-- Unified Sidebar Navigation -->
+        <div class="w-full lg:w-64 flex-shrink-0">
+            <div class="bg-white border border-black/5 p-8 sticky top-32 shadow-2xl">
+                <nav class="space-y-6">
+                    <p class="text-[9px] font-black tracking-[0.4em] text-slate-300 uppercase mb-8">Navigation</p>
+                    
+                    <a href="/Optilux/account.php" class="group flex items-center justify-between py-2 border-b border-transparent hover:border-black/10 transition-all duration-500">
+                        <span class="text-[11px] font-serif tracking-[0.2em] uppercase text-slate-400 group-hover:text-primary transition-colors">Profile Details</span>
+                        <i data-lucide="user" class="w-3 h-3 text-slate-300 group-hover:text-accent transition-colors"></i>
+                    </a>
+                    
+                    <a href="/Optilux/orders.php" class="group flex items-center justify-between py-2 border-b border-primary transition-all duration-500">
+                        <span class="text-[11px] font-serif tracking-[0.2em] uppercase text-primary font-bold">Order History</span>
+                        <div class="w-1.5 h-1.5 bg-accent rounded-full shadow-[0_0_10px_rgba(251,191,36,0.6)]"></div>
+                    </a>
+                    
+                    <a href="/Optilux/wishlist.php" class="group flex items-center justify-between py-2 border-b border-transparent hover:border-black/10 transition-all duration-500">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[11px] font-serif tracking-[0.2em] uppercase text-slate-400 group-hover:text-primary transition-colors">Wishlist</span>
+                            <span class="text-[8px] font-bold bg-slate-50 text-slate-400 px-1.5 py-0.5 border border-black/5"><?= $wishlist_count ?></span>
+                        </div>
+                        <i data-lucide="heart" class="w-3 h-3 text-slate-300 group-hover:text-rose-400 transition-colors"></i>
+                    </a>
+                    
+                    <a href="/Optilux/logout.php" class="group flex items-center justify-between py-2 mt-8 opacity-60 hover:opacity-100 transition-opacity">
+                        <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-rose-500">Secure Logout</span>
+                        <i data-lucide="power" class="w-3 h-3 text-rose-500"></i>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content Area: Elite Ledger -->
+        <div class="flex-grow">
+            <header class="mb-12 border-b border-black/10 pb-4 flex items-center justify-between">
+                <h2 class="text-xl font-serif text-primary tracking-widest uppercase">The Ledger</h2>
+                <span class="text-[9px] font-bold tracking-widest text-slate-400 uppercase"><?= count($orders) ?> Recorded Acquisitions</span>
+            </header>
             
             <?php if (empty($orders)): ?>
-                <div class="text-center py-12 text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                    <i data-lucide="package-search" class="w-16 h-16 mx-auto mb-4 text-slate-300"></i>
-                    <p class="text-lg mb-2">You haven't placed any orders yet.</p>
-                    <p class="text-sm">When you place an order, it will appear here.</p>
-                    <a href="/Optilux/shop.php" class="btn-primary inline-block mt-6">Start Shopping</a>
+                <div class="text-center py-32 bg-slate-50 border border-black/5">
+                    <i data-lucide="package" class="w-12 h-12 mx-auto text-slate-200 mb-6 stroke-[1]"></i>
+                    <h3 class="text-2xl font-serif text-primary mb-4 tracking-widest uppercase">The record is void</h3>
+                    <p class="text-slate-400 text-xs tracking-wider uppercase mb-8 max-w-sm mx-auto leading-relaxed">Your journey with Optilux is just beginning. Begin your collection today.</p>
+                    <a href="/Optilux/shop.php" class="inline-block bg-primary text-white hover:bg-black transition-all duration-300 px-10 py-5 text-[10px] tracking-[0.2em] font-semibold uppercase">
+                        Start Curation
+                    </a>
                 </div>
             <?php else: ?>
-                <div class="space-y-6">
+                <div class="space-y-12">
                     <?php foreach($orders as $order): ?>
-                        <div class="border border-slate-200 rounded-xl p-6 hover:shadow-md transition">
-                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4 mb-4">
+                        <div class="bg-white border border-black/5 p-8 shadow-sm group hover:shadow-2xl transition-all duration-700 animate-in fade-in slide-in-from-bottom-4">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-black/5 pb-8 mb-8">
                                 <div>
-                                    <h3 class="font-bold text-lg text-primary">Order #ORD-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?></h3>
-                                    <p class="text-sm text-slate-500">Placed on <?= date('F j, Y, g:i a', strtotime($order['created_at'])) ?></p>
+                                    <h3 class="font-serif text-2xl text-primary tracking-wider mb-2">ORD-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?></h3>
+                                    <p class="text-[9px] font-bold text-slate-400 tracking-[0.3em] uppercase italic"><?= date('F d, Y • g:i A', strtotime($order['created_at'])) ?></p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="font-bold text-xl text-primary"><?= formatPrice($order['total']) ?></p>
+                                    <p class="font-serif text-2xl text-primary mb-3"><?= formatPrice($order['total']) ?></p>
                                     <?php 
-                                        $statusClass = 'bg-slate-100 text-slate-600';
-                                        if ($order['status'] == 'pending') $statusClass = 'bg-amber-100 text-amber-700 border border-amber-200';
-                                        if ($order['status'] == 'processing') $statusClass = 'bg-blue-100 text-blue-700 border border-blue-200';
-                                        if ($order['status'] == 'shipped') $statusClass = 'bg-indigo-100 text-indigo-700 border border-indigo-200';
-                                        if ($order['status'] == 'delivered') $statusClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
-                                        if ($order['status'] == 'cancelled') $statusClass = 'bg-rose-100 text-rose-700 border border-rose-200';
+                                        $statusConfig = [
+                                            'pending' => ['bg' => 'bg-amber-400/10', 'text' => 'text-amber-600', 'dot' => 'bg-amber-400'],
+                                            'processing' => ['bg' => 'bg-blue-400/10', 'text' => 'text-blue-600', 'dot' => 'bg-blue-400'],
+                                            'shipped' => ['bg' => 'bg-indigo-400/10', 'text' => 'text-indigo-600', 'dot' => 'bg-indigo-400'],
+                                            'delivered' => ['bg' => 'bg-emerald-400/10', 'text' => 'text-emerald-600', 'dot' => 'bg-emerald-400'],
+                                            'cancelled' => ['bg' => 'bg-rose-400/10', 'text' => 'text-rose-600', 'dot' => 'bg-rose-400'],
+                                        ];
+                                        $cfg = $statusConfig[$order['status']] ?? ['bg' => 'bg-slate-100', 'text' => 'text-slate-600', 'dot' => 'bg-slate-400'];
                                     ?>
-                                    <span class="mt-2 inline-block px-3 py-1 rounded-full text-xs font-bold capitalize <?= $statusClass ?>"><?= htmlspecialchars($order['status']) ?></span>
+                                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full <?= $cfg['bg'] ?> <?= $cfg['text'] ?> text-[9px] font-bold tracking-widest uppercase">
+                                        <span class="w-1.5 h-1.5 rounded-full <?= $cfg['dot'] ?> shadow-[0_0_8px_rgba(0,0,0,0.1)]"></span>
+                                        <?= htmlspecialchars($order['status']) ?>
+                                    </span>
                                 </div>
                             </div>
                             
@@ -82,21 +123,25 @@ $orders = $stmt_orders->fetchAll();
                             $items = $stmt_items->fetchAll();
                             ?>
                             
-                            <div class="space-y-4">
+                            <div class="space-y-6">
                                 <?php foreach($items as $item): ?>
-                                    <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-8 group/item">
                                         <?php 
                                             $img = !empty($item['image']) ? $item['image'] : '';
                                             if ($img && strpos($img, 'http') !== 0 && strpos($img, '/') !== 0) {
                                                 $img = '/Optilux/uploads/products/' . basename($img);
                                             }
                                         ?>
-                                        <div class="flex items-center justify-center p-2">
-                                            <img src="<?= $img ?>" class="max-w-full max-h-full object-contain mix-blend-multiply" onerror="this.src=''">
+                                        <div class="w-24 h-24 bg-slate-50 flex-shrink-0 overflow-hidden border border-black/[0.03]">
+                                            <img src="<?= $img ?>" class="w-full h-full object-cover mix-blend-multiply transition duration-700 group-hover/item:scale-110" onerror="this.src=''">
                                         </div>
                                         <div class="flex-grow">
-                                            <h4 class="font-bold text-slate-800 text-sm md:text-base"><?= htmlspecialchars($item['name']) ?></h4>
-                                            <p class="text-sm text-slate-500">Qty: <?= $item['quantity'] ?> × <?= formatPrice($item['price']) ?></p>
+                                            <h4 class="font-serif text-lg text-primary tracking-wide mb-1 group-hover/item:text-accent transition-colors"><?= htmlspecialchars($item['name']) ?></h4>
+                                            <div class="flex items-center gap-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                                <span>Quantity: <?= $item['quantity'] ?></span>
+                                                <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                                <span class="text-primary"><?= formatPrice($item['price']) ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -110,5 +155,6 @@ $orders = $stmt_orders->fetchAll();
 </div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
+
 
 

@@ -39,6 +39,14 @@ $main_image = !empty($product['image']) ? $product['image'] : '';
 if ($main_image && strpos($main_image, 'http') !== 0 && strpos($main_image, '/') !== 0) {
     $main_image = '/Optilux/' . $main_image;
 }
+
+// Check Wishlist Status
+$in_wishlist = false;
+if (isLoggedIn()) {
+    $stmt_wish = $conn->prepare("SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?");
+    $stmt_wish->execute([$_SESSION['user_id'], $id]);
+    $in_wishlist = (bool)$stmt_wish->fetch();
+}
 ?>
 
 <div class="border-b border-black/5 py-4">
@@ -113,8 +121,10 @@ if ($main_image && strpos($main_image, 'http') !== 0 && strpos($main_image, '/')
                     <i data-lucide="shopping-bag" class="w-4 h-4 stroke-[1.5]"></i> Add to Cart
                 </button>
                 
-                <a href="/Optilux/wishlist.php?action=add&id=<?= $product['id'] ?>" class="h-[54px] w-[54px] flex-shrink-0 flex items-center justify-center border border-black/10 hover:border-black hover:bg-primary hover:text-white transition duration-300 group">
-                    <i data-lucide="heart" class="w-4 h-4 stroke-[1.5] text-primary group-hover:text-white transition duration-300"></i>
+                <a href="javascript:void(0)" onclick="toggleWishlist(<?= $product['id'] ?>, this)" 
+                   class="h-[54px] w-[54px] flex-shrink-0 flex items-center justify-center border <?= $in_wishlist ? 'border-accent bg-accent text-white' : 'border-black/10 hover:border-black hover:bg-primary hover:text-white' ?> transition duration-300 group"
+                   title="<?= $in_wishlist ? 'Remove from Wishlist' : 'Add to Wishlist' ?>">
+                    <i data-lucide="heart" class="w-4 h-4 <?= $in_wishlist ? 'fill-current' : 'stroke-[1.5]' ?> <?= $in_wishlist ? 'text-white' : 'text-primary group-hover:text-white' ?> transition duration-300"></i>
                 </a>
             </form>
 

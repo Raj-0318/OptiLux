@@ -51,6 +51,67 @@
 <script>
   // Initialize Lucide icons
   lucide.createIcons();
+
+  /**
+   * Global Wishlist Toggle (AJAX)
+   * Prevents page reloads and provides smooth UI transitions.
+   */
+  async function toggleWishlist(productId, btn) {
+      try {
+          const response = await fetch(`/Optilux/wishlist.php?action=toggle&id=${productId}&ajax=1`);
+          const data = await response.json();
+          
+          if (!data.success && data.redirect) {
+              window.location.href = data.redirect;
+              return;
+          }
+          
+          if (data.success) {
+              // Handle Wishlist Page (removal)
+              const itemRow = btn.closest('[data-wishlist-item]');
+              if (itemRow && data.status === 'removed') {
+                  itemRow.style.opacity = '0';
+                  setTimeout(() => {
+                      itemRow.remove();
+                      // If no items left, reload to show empty state (or could inject empty HTML)
+                      if (document.querySelectorAll('[data-wishlist-item]').length === 0) {
+                          window.location.reload();
+                      }
+                  }, 500);
+                  return;
+              }
+
+              // Handle Global Toggle (Shop/Product Page)
+              const icon = btn.querySelector('i');
+              if (data.status === 'added') {
+                  btn.classList.add('bg-accent', 'text-white');
+                  btn.classList.remove('bg-white', 'text-primary', 'border-black/10');
+                  if (icon) {
+                      icon.classList.add('fill-current');
+                      icon.classList.remove('stroke-[1.5]');
+                  }
+                  btn.title = "Remove from Wishlist";
+              } else {
+                  btn.classList.remove('bg-accent', 'text-white');
+                  // Re-add specific classes based on original state if needed
+                  // For simplicity, we just toggle based on what's common
+                  if (!btn.classList.contains('bg-primary')) {
+                      btn.classList.add('bg-white', 'text-primary');
+                  }
+                  if (icon) {
+                      icon.classList.remove('fill-current');
+                      icon.classList.add('stroke-[1.5]');
+                  }
+                  btn.title = "Add to Wishlist";
+              }
+              
+              // Broadcast event if other components need to know
+              document.dispatchEvent(new CustomEvent('wishlistUpdated', { detail: { productId, status: data.status } }));
+          }
+      } catch (error) {
+          console.error('Wishlist error:', error);
+      }
+  }
 </script>
 </body>
 </html>

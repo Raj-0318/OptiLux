@@ -171,6 +171,10 @@ $drawer_brands = $conn->query("SELECT * FROM brands ORDER BY name ASC")->fetchAl
             <?php if(isActive('orders.php', $current_page)): ?><div class="pro-active-indicator"></div><?php endif; ?>
             <i data-lucide="shopping-cart" class="w-5 h-5"></i> Orders
         </a>
+        <a href="brands.php" class="nav-link relative <?= isActive('brands.php', $current_page) ?>">
+            <?php if(isActive('brands.php', $current_page)): ?><div class="pro-active-indicator"></div><?php endif; ?>
+            <i data-lucide="award" class="w-5 h-5"></i> Brands
+        </a>
         <a href="users.php" class="nav-link relative <?= isActive('users.php', $current_page) ?>">
             <?php if(isActive('users.php', $current_page)): ?><div class="pro-active-indicator"></div><?php endif; ?>
             <i data-lucide="users" class="w-5 h-5"></i> Users

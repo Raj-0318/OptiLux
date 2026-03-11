@@ -1,32 +1,60 @@
 <?php
 require_once __DIR__ . '/includes/header.php';
 
-// Handle Add/Remove
+// Handle Add/Remove/Toggle
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $action = $_GET['action'];
     $product_id = (int)$_GET['id'];
+    $redirect = $_GET['redirect'] ?? '/Optilux/wishlist.php';
+    $is_ajax = isset($_GET['ajax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
     
+    $response = ['success' => false, 'message' => ''];
+
     if (isLoggedIn()) {
         $user_id = $_SESSION['user_id'];
-        if ($action === 'add') {
-            // Check if already in wishlist
+        
+        if ($action === 'toggle') {
+            $stmt_check = $conn->prepare("SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?");
+            $stmt_check->execute([$user_id, $product_id]);
+            if ($stmt_check->fetch()) {
+                $stmt = $conn->prepare("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?");
+                $stmt->execute([$user_id, $product_id]);
+                $response = ['success' => true, 'status' => 'removed'];
+            } else {
+                $stmt = $conn->prepare("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)");
+                $stmt->execute([$user_id, $product_id]);
+                $response = ['success' => true, 'status' => 'added'];
+            }
+        } elseif ($action === 'add') {
             $stmt_check = $conn->prepare("SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?");
             $stmt_check->execute([$user_id, $product_id]);
             if (!$stmt_check->fetch()) {
                 $stmt = $conn->prepare("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)");
                 $stmt->execute([$user_id, $product_id]);
             }
+            $response = ['success' => true, 'status' => 'added'];
         } elseif ($action === 'remove') {
             $stmt = $conn->prepare("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?");
             $stmt->execute([$user_id, $product_id]);
+            $response = ['success' => true, 'status' => 'removed'];
         }
     } else {
-        // Guest: save to session in real app
-        $_SESSION['redirect_after_login'] = '/Optilux/wishlist.php';
-        header("Location: /Optilux/login.php");
+        if ($is_ajax) {
+            $response = ['success' => false, 'redirect' => '/Optilux/login.php'];
+        } else {
+            $_SESSION['redirect_after_login'] = $redirect;
+            header("Location: /Optilux/login.php");
+            exit;
+        }
+    }
+
+    if ($is_ajax) {
+        header('Content-Type: application/json');
+        echo json_encode($response);
         exit;
     }
-    header("Location: /Optilux/wishlist.php");
+
+    header("Location: " . $redirect);
     exit;
 }
 
@@ -75,8 +103,8 @@ if (isLoggedIn()) {
                 </div>
                 
                 <?php foreach($items as $product): ?>
-                <div class="flex flex-col md:flex-row items-center border-b border-black/5 py-8 gap-8 relative group">
-                    <a href="/Optilux/wishlist.php?action=remove&id=<?= $product['id'] ?>" class="absolute top-8 right-0 md:relative md:top-auto md:right-auto text-slate-300 hover:text-primary transition duration-300" title="Remove">
+                <div data-wishlist-item class="flex flex-col md:flex-row items-center border-b border-black/5 py-8 gap-8 relative group transition-all duration-500">
+                    <a href="javascript:void(0)" onclick="toggleWishlist(<?= $product['id'] ?>, this)" class="absolute top-8 right-0 md:relative md:top-auto md:right-auto text-slate-300 hover:text-primary transition duration-300" title="Remove">
                         <i data-lucide="x" class="w-5 h-5 stroke-[1]"></i>
                     </a>
                     
@@ -104,7 +132,10 @@ if (isLoggedIn()) {
                         </div>
                     </div>
                     
-                    <div class="w-full md:w-2/5 flex justify-center md:justify-end">
+                    <div class="w-full md:w-2/5 flex flex-col md:flex-row items-center justify-center md:justify-end gap-6">
+                        <a href="javascript:void(0)" onclick="toggleWishlist(<?= $product['id'] ?>, this)" class="text-[10px] font-bold text-slate-400 hover:text-rose-500 uppercase tracking-widest transition-colors duration-300">
+                            Remove from Wishlist
+                        </a>
                         <a href="/Optilux/cart.php?action=add&id=<?= $product['id'] ?>" class="bg-primary text-white hover:bg-black transition-all duration-300 uppercase tracking-[0.2em] font-semibold text-[10px] px-8 py-4 border border-primary">
                             Move to Cart
                         </a>

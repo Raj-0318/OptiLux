@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="flex-grow flex min-h-[80vh]" style="margin:2rem; border:0.5px solid gray">
     <!-- Left side: Abstract Luxury Image -->
     <div class="hidden lg:block lg:w-1/2 relative bg-primary order-last">
-        <img src="https://images.unsplash.com/photo-1556306535-0f09a536f0bff?auto=format&fit=crop&q=80&w=1200" alt="Luxury Atelier Experience" class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale mix-blend-luminosity">
+        <img src="https://i.pinimg.com/1200x/17/f9/84/17f98449a3a2bb7b451dc64d26aad076.jpg" alt="Luxury Atelier Experience" class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale mix-blend-luminosity">
         <div class="absolute inset-x-0 bottom-0 p-16 bg-gradient-to-t from-primary via-primary/80 to-transparent">
             <h2 class="text-white font-serif text-4xl tracking-widest uppercase mb-4">Join Us</h2>
             <p class="text-white/50 text-xs tracking-wider uppercase leading-relaxed max-w-md">Create an account for faster checkout and to track your orders.</p>
