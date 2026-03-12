@@ -142,7 +142,7 @@
             "Style is a way to say who you are without having to speak. We provide the vocabulary."
         </h2>
         <div class="pt-8">
-            <span class="text-slate-400 text-[10px] font-black tracking-[0.5em] uppercase">— THE MAISON PHILOSOPHY</span>
+            <span class="text-slate-400 text-[10px] font-black tracking-[0.5em] uppercase">— THE Optilux PHILOSOPHY</span>
         </div>
     </div>
 </section>

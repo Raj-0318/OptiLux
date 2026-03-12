@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
 
 // Handle Cart Actions
 if (isset($_GET['action'])) {
@@ -63,6 +65,8 @@ if (isLoggedIn()) {
 }
 $shipping = $subtotal > 999 || $subtotal == 0 ? 0 : 99; // Free shipping over 999
 $total = $subtotal + $shipping;
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="border-b border-black/5 py-4">

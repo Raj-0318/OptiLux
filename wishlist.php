@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
 
 // Handle Add/Remove/Toggle
 if (isset($_GET['action']) && isset($_GET['id'])) {
@@ -73,6 +75,8 @@ if (isLoggedIn()) {
     header("Location: /Optilux/login.php");
     exit;
 }
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="border-b border-black/5 py-4">
